@@ -6,10 +6,11 @@ import { Editor } from '@/components/editor/Editor'
 import Header from '@/components/Header'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import ActiveCollabrators from './ActiveCollabrators';
-import { Input } from './input';
+import { Input } from './ui/input';
 import Image from 'next/image';
 import { updateDocument } from '@/lib/actions/room.actions';
 import Loader from './Loader';
+import ShareModalc from './ShareModal';
 
 
 const CollaborativeRoom = ({roomId,roomMetadata, users , currentUserType}: CollaborativeRoomProps) => {
@@ -104,7 +105,12 @@ const CollaborativeRoom = ({roomId,roomMetadata, users , currentUserType}: Colla
 
             <div className="flex w-full flex-1 justify-end gap-2 sm:gap-3">
               <ActiveCollabrators />
-            
+            <ShareModalc
+            roomId={roomId}
+            collaborators={users}
+            creatorId={roomMetadata.creatorId}
+            currentUserType={currentUserType}
+            /> 
             <SignedOut>
           <SignInButton />
         </SignedOut>

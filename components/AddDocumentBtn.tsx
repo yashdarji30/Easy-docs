@@ -1,10 +1,11 @@
 'use client'; 
 
 import React from 'react'
-import { Button } from './button'
+
 import Image from 'next/image'
 import { createDocument } from '@/lib/actions/room.actions'
 import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 
 
 const AddDocumentBtn = ({userId,email}: AddDocumentBtnProps) => {
