@@ -11,6 +11,10 @@ import React from 'react';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import Theme from './plugins/Theme';
 
+import { FloatingComposer, FloatingThreads, liveblocksConfig, LiveblocksPlugin, useEditorStatus } from '@liveblocks/react-lexical'
+import Loader from '../ui/Loader';
+import FloatingToolbar from './plugins/FloatingToolbarPlugin';
+import { useThreads } from '@liveblocks/react/suspense';
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
 // try to recover gracefully without losing user data.
@@ -19,8 +23,11 @@ function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
 }
 
-export function Editor() {
-  const initialConfig = {
+export function Editor({roomId,currentUserType}: {roomId:string,currentUserType:UserType}) {
+  const status = useEditorStatus();
+
+  const {threads} = useThreads();
+  const initialConfig = liveblocksConfig({
     namespace: 'Editor',
     nodes: [HeadingNode],
     onError: (error: Error) => {
@@ -28,14 +35,20 @@ export function Editor() {
       throw error;
     },
     theme: Theme,
-  };
+    editable: currentUserType === 'editor',
+  });
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="editor-container size-full">
+        <div className="toolabar-wrapper flex min-w-full justify-between">
         <ToolbarPlugin />
+        {/* {currentUserType ==== 'editor' && <DeleteModal roomId={roomId} />} */}
+        </div>
 
-        <div className="editor-inner h-[1100px]">
+        <div className="editor-wrapper flex-col items-center justify-center">
+          {status === 'not-loaded' || status === 'loading' ? <Loader /> : (
+            <div className="editor-inner min-h-[1100px] relative mb-5 h-fit w-full max-w-[800px] shadow-md lg:mb-10">
           <RichTextPlugin
             contentEditable={
               <ContentEditable className="editor-input h-full" />
@@ -43,9 +56,18 @@ export function Editor() {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          {currentUserType === 'editor' && <FloatingToolbar />}
           <HistoryPlugin />
           <AutoFocusPlugin />
         </div>
+          )}
+        <LiveblocksPlugin>
+           <FloatingComposer className="w-[350px]" />
+           <FloatingThreads threads={threads} />
+        </LiveblocksPlugin>
+        </div>
+        
+
       </div>
     </LexicalComposer>
   );
