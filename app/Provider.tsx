@@ -1,9 +1,9 @@
 'use client';
 
 import { ClientSideSuspense, LiveblocksProvider} from '@liveblocks/react/suspense'
-import Loader from './Loader';
 import { getClerkUsers, getDocumentUsers } from '@/lib/actions/user.actions';
 import { useUser } from '@clerk/nextjs';
+import Loader from '@/components/Loader';
 
 const Provider = ({children}: {children: React.ReactNode}) => {
   const {user:clerkUser} = useUser();
